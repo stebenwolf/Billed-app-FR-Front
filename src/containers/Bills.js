@@ -27,15 +27,6 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
-  sortByDate = (list) => {
-    const byDate = list.slice(0)
-    byDate.sort((a, b) => {
-        // pour trier les dates qui sont actuellement au format string "YYYY-MM-DD", on compare leur timestamp via un Date.parse(), sans changer le format de la variable.
-        return Date.parse(a.date) - Date.parse(b.date)
-    })
-    return byDate
-  }
-
   getBills = () => {
     if (this.store) {
       return this.store
@@ -43,10 +34,10 @@ export default class {
       .list()
       .then(snapshot => {
         
-        const bills = this.sortByDate(snapshot)
+        const bills = snapshot.sort((a, b) => (new Date(a.date) - new Date(b.date)))
           .map(doc => {
             try {
-              console.log(doc.date)
+              //console.log(doc.date)
               
               return {
                 ...doc,
@@ -66,7 +57,7 @@ export default class {
               }
             }
           })
-          console.log('length', bills.length)
+          //console.log('length', bills.length)
         return bills
       })
     }
