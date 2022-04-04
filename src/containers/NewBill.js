@@ -14,16 +14,17 @@ export default class NewBill {
     this.fileName = null
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
+    this.validType = -1
   }
   handleChangeFile = e => {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    const fileName = file["name"]
     const fileNameParts = fileName.split('.')
     const fileExt = fileNameParts[fileNameParts.length-1].toLowerCase()
     const types = ["jpg","png","jpeg"]
     const validType = types.indexOf(fileExt)
+    this.validType = validType
     const submitButton = this.document.getElementById("btn-send-bill")
     if (validType == -1) {
       submitButton.disabled = true
@@ -47,11 +48,11 @@ export default class NewBill {
         }
       })
       .then(({fileUrl, key}) => {
-        console.log(fileUrl)
         this.billId = key
         this.fileUrl = fileUrl
         this.fileName = fileName
-      }).catch(error => console.error(error))
+      })
+      .catch(error => console.error(error))
   }
   handleSubmit = e => {
     e.preventDefault()
