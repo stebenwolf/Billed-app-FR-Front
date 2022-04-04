@@ -27,18 +27,22 @@ export default class {
     $('#modaleFile').modal('show')
   }
 
+  sortByDate = (list) => {
+    list.sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    })
+    return list
+  }
+
   getBills = () => {
     if (this.store) {
       return this.store
       .bills()
       .list()
       .then(snapshot => {
-        
-        const bills = snapshot.sort((a, b) => (new Date(a.date) - new Date(b.date)))
+        const bills = this.sortByDate(snapshot)
           .map(doc => {
-            try {
-              //console.log(doc.date)
-              
+            try {              
               return {
                 ...doc,
                 //date: formatDate(doc.date),
@@ -49,7 +53,7 @@ export default class {
             } catch(e) {
               // if for some reason, corrupted data was introduced, we manage here failing formatDate function
               // log the error and return unformatted date in that case
-              console.log(e,'for',doc)
+              //console.log(e,'for',doc)
               return {
                 ...doc,
                 date: doc.date,
@@ -57,7 +61,6 @@ export default class {
               }
             }
           })
-          //console.log('length', bills.length)
         return bills
       })
     }
