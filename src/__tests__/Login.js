@@ -6,6 +6,7 @@ import LoginUI from "../views/LoginUI";
 import Login from "../containers/Login.js";
 import { ROUTES } from "../constants/routes";
 import { fireEvent, screen } from "@testing-library/dom";
+import { localStorageMock } from "../__mocks__/localStorage";
 
 describe("Given that I am a user on login page", () => {
   describe("When I do not fill fields and I click on employee button Login In", () => {
@@ -228,3 +229,94 @@ describe("Given that I am a user on login page", () => {
     });
   });
 });
+
+
+/* describe("Given that I am a user on login page", () => {
+  describe("When I fill employee infos in the right format, but the user doesn't exist", () => {
+    test("Then I still should be identified as an Employee in app", () => {
+      document.body.innerHTML = LoginUI();
+      const inputData = {
+        email: "johndoe@email.com",
+        password: "azerty",
+      };
+
+      const notExistingData = {
+        email: "randomEmail@Email.com",
+        password: "randomPassword"
+      }
+
+      const inputEmailUser = screen.getByTestId("employee-email-input");
+      fireEvent.change(inputEmailUser, { target: { value: notExistingData.email } });
+      expect(inputEmailUser.value).not.toBe(inputData.email);
+
+      const inputPasswordUser = screen.getByTestId("employee-password-input");
+      fireEvent.change(inputPasswordUser, {
+        target: { value: notExistingData.password },
+      });
+      expect(inputPasswordUser.value).not.toBe(inputData.password);
+
+      const form = screen.getByTestId("form-employee");
+
+      // localStorage should be populated with form data
+      Object.defineProperty(window, "localStorage", {
+        value: {
+          getItem: jest.fn(() => null),
+          setItem: jest.fn(() => null),
+        },
+        writable: true,
+      });
+
+      // we have to mock navigation to test it
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+
+      let PREVIOUS_LOCATION = "";
+
+      const store = jest.fn();
+
+      const login = new Login({
+        document,
+        localStorage: window.localStorage,
+        onNavigate,
+        PREVIOUS_LOCATION,
+        store,
+      });
+
+      const handleSubmit = jest.fn(login.handleSubmitEmployee);
+      login.login = jest.fn().mockResolvedValue({});
+      form.addEventListener("submit", handleSubmit);
+      fireEvent.submit(form);
+      expect(handleSubmit).toHaveBeenCalled();
+      expect(window.localStorage.setItem).toHaveBeenCalled();
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        "user",
+        JSON.stringify({
+          type: "Employee",
+          email: notExistingData.email,
+          password: notExistingData.password,
+          status: "connected",
+        })
+      );
+
+      const newUser = localStorageMock.setItem("user", JSON.stringify({
+        type: "Employee",
+        email: notExistingData.email,
+        password: notExistingData.password,
+        status: "connected",
+      }))
+      const create = jest.fn(login.createUser(newUser).mockResolvedValue({}))
+      fireEvent.call(create)
+      expect(create).toHaveBeenCalled()
+    });
+
+    test("It should renders Bills page", () => {
+      expect(screen.getAllByText("Mes notes de frais")).toBeTruthy();
+    });
+  })
+  describe("When I fill employee infos in the right format, but the user doesn't exist", () => {
+    test("Then it should create a new employee", () => {
+      
+    })
+  })
+}) */
